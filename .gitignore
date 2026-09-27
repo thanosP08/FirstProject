@@ -1,3 +1,9 @@
+.idea/
+out/
+*.iml
+*.bin
+
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
