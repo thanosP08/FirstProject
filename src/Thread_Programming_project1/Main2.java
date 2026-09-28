@@ -1,7 +1,7 @@
-package Thread_Programming_project;
+package Thread_Programming_project1;
 
-import Thread_Programming_project.Threads.PriceLimitMonitor;
-import Thread_Programming_project.Threads.StockMonitor;
+import Thread_Programming_project1.Threads.PriceLimitMonitor;
+import Thread_Programming_project1.Threads.StockMonitor;
 
 import java.util.Scanner;
 

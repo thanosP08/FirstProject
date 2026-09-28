@@ -1,12 +1,12 @@
 //not ready yet
 
-package Thread_Programming_project.Threads;
+package Thread_Programming_project1.Threads;
 
-import Thread_Programming_project.Warehouse;
+import Thread_Programming_project1.Warehouse;
 
 import java.util.HashMap;
 
-import static Thread_Programming_project.Methods.getFile;
+import static Thread_Programming_project1.Methods.getFile;
 
 public class PercentageMonitor implements Runnable {
 

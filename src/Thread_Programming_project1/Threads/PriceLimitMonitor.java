@@ -1,8 +1,8 @@
-package Thread_Programming_project.Threads;
+package Thread_Programming_project1.Threads;
 
-import Thread_Programming_project.Methods;
-import Thread_Programming_project.Product;
-import Thread_Programming_project.Warehouse;
+import Thread_Programming_project1.Methods;
+import Thread_Programming_project1.Product;
+import Thread_Programming_project1.Warehouse;
 
 import java.util.*;
 

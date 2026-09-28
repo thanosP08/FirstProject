@@ -1,4 +1,4 @@
-package Thread_Programming_project;
+package Thread_Programming_project1;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

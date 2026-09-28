@@ -1,6 +1,6 @@
-package Thread_Programming_project.Threads;
+package Thread_Programming_project1.Threads;
 
-import Thread_Programming_project.Warehouse;
+import Thread_Programming_project1.Warehouse;
 
 public class StockMonitor implements Runnable {
 
