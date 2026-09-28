@@ -37,9 +37,6 @@ public class Coin implements Serializable {
 
         this.COIN_PATH = "src/Thread_Programming_project2/Files/Coins/Coin_" + id + ".bin";
         safeFile(this.COIN_PATH, this);
-
-        // Currently unused. Kept for a future version with an in-memory portfolio system:
-        // (HashMap<String, String> coins).
         HashMap<String, String> coins = getFile(COINS_PATH);
 
         if (coins == null) {
