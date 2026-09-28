@@ -3,9 +3,7 @@ package Thread_Programming_project2;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import static Thread_Programming_project2.Methods.*;
-import static Thread_Programming_project2.Methods.safeFile;
 
 public class Coin implements Serializable {
 
@@ -18,10 +16,10 @@ public class Coin implements Serializable {
     private final String id;
 
     private static final String ID_PATH =
-            "src/Project2/Files/coinIDs.bin";
+            "src/Thread_Programming_project2/Files/coinIDs.bin";
 
     private static final String COINS_PATH =
-            "src/Project2/Files/Coins.bin";
+            "src/Thread_Programming_project2/Files/Coins.bin";
 
     private final String COIN_PATH;
 
@@ -37,7 +35,7 @@ public class Coin implements Serializable {
         this.sellVolume = 0;
         this.id = idSet(ID_PATH);
 
-        this.COIN_PATH = "src/Project2/Files/Coins/Coin_" + id + ".bin";
+        this.COIN_PATH = "src/Thread_Programming_project2/Files/Coins/Coin_" + id + ".bin";
         safeFile(this.COIN_PATH, this);
 
         // Currently unused. Kept for a future version with an in-memory portfolio system:

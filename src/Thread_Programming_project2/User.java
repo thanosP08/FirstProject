@@ -11,10 +11,11 @@ public class User implements Serializable {
     private String name;
     private double money;
     private final double startingMoney;
+    // Currently unused. Kept for a possible future version with an in-memory portfolio system.
     private HashMap<String, Double> coins;
 
     private static final String ID_PATH =
-            "src/Project2/Files/userIDs.bin";
+            "src/Thread_Programming_project2/Files/userIDs.bin";
 
     private final String USERS_DATA_PATH;
 
@@ -25,7 +26,7 @@ public class User implements Serializable {
         this.startingMoney = money;
         this.coins = new HashMap<>();
         this.USERS_DATA_PATH =
-                "src/Project2/Files/UserData/user" + id + ".bin";
+                "src/Thread_Programming_project2/Files/UserData/user" + id + ".bin";
     }
 
     public String getId() {

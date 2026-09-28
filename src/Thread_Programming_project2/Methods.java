@@ -8,7 +8,14 @@ import java.util.Random;
 public abstract class Methods {
 
     public static <T extends Serializable> void safeFile(String filePath, T data) {
-        try (FileOutputStream fos = new FileOutputStream(filePath);
+        File file = new File(filePath);
+        File parentFolder = file.getParentFile();
+
+        if (parentFolder != null && !parentFolder.exists()) {
+            parentFolder.mkdirs();
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             oos.writeObject(data);
@@ -51,7 +58,7 @@ public abstract class Methods {
     }
 
     public static void createResultFile(Coin[] coins, User[] users) {
-        File resultFolder = new File("src/Project2/Files/result");
+        File resultFolder = new File("src/Thread_Programming_project2/Files/result");
 
         if (!resultFolder.exists()) {
             resultFolder.mkdirs();
