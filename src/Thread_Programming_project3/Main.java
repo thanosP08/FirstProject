@@ -7,15 +7,213 @@ import Thread_Programming_project3.system.Coin;
 import Thread_Programming_project3.system.Market;
 import Thread_Programming_project3.system.Portfolio;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Locale;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
+
+
+    private static void showHistoricalInstructions(String csvFilePath) {
+
+        System.out.println("\n========== HISTORICAL SIMULATION INSTRUCTIONS ==========");
+
+        System.out.println("\n1. CSV FILE");
+        System.out.println("Open the following CSV file:");
+        System.out.println(csvFilePath);
+        System.out.println("Enter the historical price data for your registered coins.");
+
+        System.out.println("\n2. FILE STRUCTURE");
+        System.out.println("The first row must contain the coin symbols followed by 'time'.");
+        System.out.println("Example:");
+        System.out.println("BTC,ETH,time");
+        System.out.println("65000,3200,00:00:00");
+        System.out.println("NULL,3210,00:00:05");
+        System.out.println("65200,NULL,00:00:10");
+
+        System.out.println("\n3. COIN REQUIREMENTS");
+        System.out.println("- Use only coins registered in your Market.");
+        System.out.println("- Each coin must appear exactly once in the header.");
+        System.out.println("- Every coin must have at least one valid price.");
+        System.out.println("- Do not change the order of the columns.");
+
+        System.out.println("\n4. PRICE REQUIREMENTS");
+        System.out.println("- Prices must be positive numbers.");
+        System.out.println("- Negative prices, zero, NaN and Infinity are not allowed.");
+        System.out.println("- Use NULL when a coin has no price update.");
+        System.out.println("- Use a dot (.) for decimal values.");
+
+        System.out.println("\n5. TIME REQUIREMENTS");
+        System.out.println("- Time format: HH:MM:SS.");
+        System.out.println("- Allowed range: 00:00:00 to 23:59:59.");
+        System.out.println("- Timestamps must be strictly increasing.");
+        System.out.println("- Duplicate timestamps are not allowed.");
+
+        System.out.println("\n6. IMPORTANT RULES");
+        System.out.println("- Separate all values using commas.");
+        System.out.println("- Do not add extra commas or missing columns.");
+        System.out.println("- Do not add extra text or comments to the CSV.");
+        System.out.println("- Save your changes before starting the simulation.");
+
+        System.out.println("\n7. STARTING THE SIMULATION");
+        System.out.println("- Return to the Historical Simulation menu.");
+        System.out.println("- Select option 4 to validate your CSV file.");
+        System.out.println("- Select option 5 to start the simulation.");
+
+        System.out.println("\n========================================================");
+    }
+
+
+    private static void createHistoricalCSV(
+            Market market,
+            Path path,
+            boolean overwrite
+    ) throws IOException {
+
+        Path parent = path.toAbsolutePath().getParent();
+
+        if (parent != null) {
+            Files.createDirectories(parent);
+        }
+
+        ArrayList<String> symbols =
+                new ArrayList<>(market.getCoins().keySet());
+
+        Collections.sort(symbols);
+
+        symbols.add("time");
+
+        try (BufferedWriter writer = overwrite
+                ? Files.newBufferedWriter(
+                path,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        )
+                : Files.newBufferedWriter(
+                path,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE_NEW
+        )) {
+
+            writer.write(String.join(",", symbols));
+            writer.newLine();
+        }
+    }
+
+
+
+    private static void historicalSimulationMenu(
+            Market market,
+            Portfolio portfolio,
+            String csvFilePathForHistoryPrices
+    ) throws InterruptedException {
+
+        Path csvPath = Path.of(csvFilePathForHistoryPrices);
+
+        while (true) {
+
+            System.out.println("\n========== HISTORICAL SIMULATION ==========");
+            System.out.println("1. Activate Historical Mode");
+            System.out.println("2. Show Instructions");
+            System.out.println("3. Historical Data Examples");
+            System.out.println("4. Validate CSV File");
+            System.out.println("5. Start Simulation");
+            System.out.println("6. Reset Historical Data");
+            System.out.println("0. Back to Main Menu");
+
+            String choice = readInput("Choose: ");
+
+            if (choice.equals("1")) {
+
+                if (Files.exists(csvPath)) {
+                    System.out.println("Historical mode is already activated.");
+                    System.out.println("Your existing CSV file has been preserved.");
+                    System.out.println("File: " + csvPath.toAbsolutePath());
+                    showHistoricalInstructions(csvFilePathForHistoryPrices);
+                    continue;
+                }
+
+                try {
+                    createHistoricalCSV(market, csvPath, false);
+
+                    System.out.println("Historical mode activated successfully!");
+                    System.out.println("CSV file created: " + csvPath.toAbsolutePath());
+
+                    showHistoricalInstructions(csvFilePathForHistoryPrices);
+
+                } catch (IOException e) {
+                    System.out.println("Failed to create CSV file: " + e.getMessage());
+                }
+
+            } else if (choice.equals("2")) {
+
+                showHistoricalInstructions(csvFilePathForHistoryPrices);
+
+            } else if (choice.equals("3")) {
+
+                System.out.println("Historical data examples are not available yet.");
+
+            } else if (choice.equals("4")) {
+
+                System.out.println("CSV validation is not implemented yet.");
+
+            } else if (choice.equals("5")) {
+
+                System.out.println("Historical simulation is not implemented yet.");
+
+            } else if (choice.equals("6")) {
+
+                if (Files.exists(csvPath)) {
+                    System.out.println("\nWARNING!");
+                    System.out.println("All existing historical price data will be lost.");
+                } else {
+                    System.out.println("No existing CSV file was found.");
+                    System.out.println("A new CSV template will be created.");
+                }
+
+                String confirmation = readInput(
+                        "Do you want to continue? (YES/NO): "
+                );
+
+                if (!confirmation.equalsIgnoreCase("YES")) {
+                    System.out.println("Reset cancelled.");
+                    continue;
+                }
+
+                try {
+                    createHistoricalCSV(market, csvPath, true);
+
+                    System.out.println("Historical data reset successfully!");
+                    System.out.println("New CSV template: " + csvPath.toAbsolutePath());
+
+                    showHistoricalInstructions(csvFilePathForHistoryPrices);
+
+                } catch (IOException e) {
+                    System.out.println("Failed to reset CSV file: " + e.getMessage());
+                }
+
+            } else if (choice.equals("0")) {
+
+                System.out.println("Returning to Main Menu...");
+                return;
+
+            } else {
+
+                System.out.println("Invalid option!");
+            }
+        }
+    }
+
 
     private static final BlockingQueue<String> INPUT =
             new LinkedBlockingQueue<>();
