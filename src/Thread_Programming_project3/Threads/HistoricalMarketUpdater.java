@@ -47,6 +47,11 @@ public class HistoricalMarketUpdater implements Runnable {
     public static HashMap<String, ArrayList<PriceChangeNode>> FileTxt(String path, int totalLen, int lenCoins,
                                                                       int timeIndex, HashMap<String, Coin> Coins)
             throws MarketFileException {
+        if (lenCoins <= 0) {
+            throw new MarketFileException(
+                    "Invalid market configuration: The market must contain at least one coin."
+            );
+        }
 
         if (totalLen != lenCoins + 1 || timeIndex != lenCoins) {
             throw new MarketFileException(
@@ -55,7 +60,6 @@ public class HistoricalMarketUpdater implements Runnable {
                             "Please check totalLen, lenCoins and timeIndex."
             );
         }
-
         String data;
         int cnt = 0;
         HashMap<String, ArrayList<PriceChangeNode>> result = new HashMap<>();
@@ -64,7 +68,7 @@ public class HistoricalMarketUpdater implements Runnable {
         try (BufferedReader oos = new BufferedReader(new FileReader(path))) {
             int time,previousTime =-1;
             while ((data = oos.readLine()) != null) {
-                String[] parts = data.split(",");
+                String[] parts = data.split(",",-1);
 
                 if (parts.length != totalLen) {
                     throw new MarketFileException(
@@ -154,16 +158,21 @@ public class HistoricalMarketUpdater implements Runnable {
                                                 "'. Price must be a positive, finite number."
                                 );
                             }
-                        } catch (Exception e) {
+                        } catch (MarketFileException e) {
+                            throw e;
+                        } catch (NumberFormatException e) {
                             throw new MarketFileException(
-                                    "Line " + (cnt + 1) + ": Invalid price '" + str_price + "' for coin '"
-                                            + CoinMap.get(i) + "'. Expected a numeric value or NULL.", e);
+                                    "Line " + (cnt + 1) + ": Invalid price '" + str_price +
+                                            "' for coin '" + CoinMap.get(i) +
+                                            "'. Expected a numeric value or NULL.", e
+                            );
                         }
 
-                        ArrayList<PriceChangeNode> pricesArrList = result.get(CoinMap.get(i));
-                        PriceChangeNode newNode = new PriceChangeNode(time, price);
-                        pricesArrList.add(newNode);
-                        result.put(CoinMap.get(i), pricesArrList);
+//                        ArrayList<PriceChangeNode> pricesArrList = result.get(CoinMap.get(i));
+//                        PriceChangeNode newNode = new PriceChangeNode(time, price);
+//                        pricesArrList.add(newNode);
+//                        result.put(CoinMap.get(i), pricesArrList);
+                        result.get(CoinMap.get(i)).add(new PriceChangeNode(time, price));
                     }
                     previousTime = time;
                 }
@@ -183,6 +192,17 @@ public class HistoricalMarketUpdater implements Runnable {
                             "Please provide a valid header and at least one row of market price data."
             );
         }
+
+        for (var entry : result.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                throw new MarketFileException(
+                        "Invalid market file: Coin '" + entry.getKey() +
+                                "' has no valid price data. Please provide at least one " +
+                                "positive price for this coin before starting the simulation."
+                );
+            }
+        }
+
 
         return result;
     }
